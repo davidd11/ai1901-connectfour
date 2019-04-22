@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+black = "*"
 
 [dev-packages]
 black = "*"
@@ -11,7 +12,7 @@ pytest = "*"
 pylint = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7.2"
 
 [pipenv]
 allow_prereleases = true
