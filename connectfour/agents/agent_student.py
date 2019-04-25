@@ -2,22 +2,6 @@ from connectfour.agents.computer_player import RandomAgent
 import random
 
 
-def check_three_rows(board):
-    three_in_row = 3
-    for row in board:
-        same_count = 1
-        curr = row[0]
-        for i in range(1, board.width):
-            if row[i] == curr:
-                same_count += 1
-                if same_count == three_in_row and curr != 0:
-                    return curr
-            else:
-                same_count = 1
-                curr = row[i]
-    return 0
-
-
 class StudentAgent(RandomAgent):
     def __init__(self, name):
         super().__init__(name)
@@ -102,24 +86,34 @@ class StudentAgent(RandomAgent):
             next_state(turn)
             winner()
         """
+        valid_moves = board.valid_moves()
+        if board.terminal():
+            if board.winner() == self.id:
+                print("winner")
+                return 1000000000000000
+            elif board.winner() != self.id and board.winner() != 0:
+                print("loser")
+                return -1000000000000000
+            else:
+                return 0
+        else:
+            print(*valid_moves, end="==========\n")
+            # for move in valid_moves:
+            return random.uniform(0, 1)
         board_value = 0
         # how many three in a row does this player have
-        three_in_row = check_three_rows(board)
+        three_in_row = self.check_three_rows(board)
         two_in_row = 0
-        disjointed_three = 0
-        disJointed_two = 0
 
-        if board.winner(board) == self.id:
-            return 1
-        elif board.winner(board) != self.id and board.winner(board) != 0:
-            return -1
-        else:
-            return random.uniform(0, 1)
-            # return board_value
+        # if board.winner() == self.id:
+        #     print(three_in_row, end=" winner\n")
+        #     return 1
+        # elif board.winner() != self.id and board.winner() != 0:
+        #     print(three_in_row, end=" loser\n")
+        #     return -1
+        # else:
+        #     print(three_in_row, end=" draw or nothing\n")
+        #     board_value += three_in_row
+        #     return board_value
 
-    '''
-    def getThreesInRow(self, board):
-        three_in_row = 0
-        for row in range(board.width):
-            for col in range(board.height):
-    '''
+
