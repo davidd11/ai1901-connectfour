@@ -1,5 +1,12 @@
 from connectfour.agents.computer_player import RandomAgent
 import random
+import pdb
+
+THREE_IN_ROW = 3
+
+FOUR_IN_ROW = 4
+
+WIN_VALUE = 100000000000000
 
 
 class StudentAgent(RandomAgent):
@@ -87,33 +94,47 @@ class StudentAgent(RandomAgent):
             winner()
         """
         valid_moves = board.valid_moves()
+        board_value = 0
+        # If the game is over
         if board.terminal():
             if board.winner() == self.id:
                 print("winner")
-                return 1000000000000000
+                for i in range(board.height):
+                    for j in range(board.width):
+                        print(board.get_cell_value(i, j), end=' ')
+                    print()
+                return WIN_VALUE
             elif board.winner() != self.id and board.winner() != 0:
                 print("loser")
+                for i in range(board.height):
+                    for j in range(board.width):
+                        print(board.get_cell_value(i, j), end=' ')
+                    print()
                 return -1000000000000000
             else:
-                return 0
+                # print("Draw")
+                print("loser")
+                for i in range(board.height):
+                    for j in range(board.width):
+                        print(board.get_cell_value(i, j), end=' ')
+                    print()
+                return -1000000000000000
+                # return 0
+        # If game is still in progress
         else:
-            print(*valid_moves, end="==========\n")
-            # for move in valid_moves:
-            return random.uniform(0, 1)
-        board_value = 0
-        # how many three in a row does this player have
-        three_in_row = self.check_three_rows(board)
-        two_in_row = 0
-
-        # if board.winner() == self.id:
-        #     print(three_in_row, end=" winner\n")
-        #     return 1
-        # elif board.winner() != self.id and board.winner() != 0:
-        #     print(three_in_row, end=" loser\n")
-        #     return -1
-        # else:
-        #     print(three_in_row, end=" draw or nothing\n")
-        #     board_value += three_in_row
-        #     return board_value
-
+            # pdb.set_trace()
+            for row in range(board.height):
+                row_array = []
+                for col in range(board.width):
+                    row_array.append(board.get_cell_value(row, col))
+                for i in range(board.width - 3):
+                    window = row_array[i: i+4]
+                    # If the window contains 4 player pieces
+                    if window.count(self.id) == FOUR_IN_ROW:
+                        board_value += WIN_VALUE
+                    if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
+                        # pdb.set_trace()
+                        board_value += 10
+            print(board_value)
+            return board_value
 
