@@ -2,11 +2,17 @@ from connectfour.agents.computer_player import RandomAgent
 import random
 import pdb
 
+WINDOW_LENGTH = 4
+
+THREE_VALUE = 10
+
+LOSE_VALUE = -1000000000000000
+
 THREE_IN_ROW = 3
 
 FOUR_IN_ROW = 4
 
-WIN_VALUE = 100000000000000
+WIN_VALUE = 1000000000000000
 
 
 class StudentAgent(RandomAgent):
@@ -110,7 +116,7 @@ class StudentAgent(RandomAgent):
                     for j in range(board.width):
                         print(board.get_cell_value(i, j), end=' ')
                     print()
-                return -1000000000000000
+                return LOSE_VALUE
             else:
                 # print("Draw")
                 print("loser")
@@ -118,23 +124,70 @@ class StudentAgent(RandomAgent):
                     for j in range(board.width):
                         print(board.get_cell_value(i, j), end=' ')
                     print()
-                return -1000000000000000
+                return LOSE_VALUE
                 # return 0
         # If game is still in progress
         else:
             # pdb.set_trace()
-            for row in range(board.height):
-                row_array = []
-                for col in range(board.width):
-                    row_array.append(board.get_cell_value(row, col))
-                for i in range(board.width - 3):
-                    window = row_array[i: i+4]
-                    # If the window contains 4 player pieces
-                    if window.count(self.id) == FOUR_IN_ROW:
-                        board_value += WIN_VALUE
-                    if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
-                        # pdb.set_trace()
-                        board_value += 10
-            print(board_value)
-            return board_value
+            board_value += self.check_horizontal(board)
+            board_value += self.check_vertical(board)
+            board_value += self.check_diagonal_down(board)
+        return board_value
 
+    # Checking each row for possible 3 in a row or 4 in a row
+    def check_horizontal(self, board):
+        horizontal_value = 0
+        for row in range(board.height):
+            row_array = []
+            for col in range(board.width):
+                row_array.append(board.get_cell_value(row, col))
+            for i in range(board.width - 3):
+                window = row_array[i: i + 4]
+                # If the window contains 4 player pieces
+                if window.count(self.id) == FOUR_IN_ROW:
+                    horizontal_value += WIN_VALUE
+                # If window contains 3 player pieces and 1 empty piece
+                if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
+                    # pdb.set_trace()
+                    horizontal_value += THREE_VALUE
+        return horizontal_value
+
+    # Checking each column for possible 3 or 4 in column
+    def check_vertical(self, board):
+        vertical_value = 0
+        for col in range(board.width):
+            col_array = []
+            # pdb.set_trace()
+            for row in range(board.height):
+                # Trying to get only the column value
+                col_array.append(board.get_cell_value(row, col))
+                # print(board.get_cell_value(row, col), end='')
+            # print(*col_array)
+            for i in range(board.height - 3):
+                window = col_array[i: i + 4]
+                print(*window)
+                if window.count(self.id) == FOUR_IN_ROW:
+                    vertical_value += WIN_VALUE
+                if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
+                    # pdb
+                    # print("3 Column")
+                    vertical_value += THREE_VALUE
+            # print()
+        return vertical_value
+
+    def check_diagonal_down(self, board):
+        diagonal_value = 0
+        for row in range(board.height - 3):
+            for col in range(board.width - 3):
+                window = []
+                for i in range(WINDOW_LENGTH):
+                    window.append(board.get_cell_value(row + i, col + i))
+                # pdb.set_trace()
+                print(*window)
+                if window.count(self.id) == FOUR_IN_ROW:
+                    diagonal_value += WIN_VALUE
+                # If window contains 3 player pieces and 1 empty piece
+                if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
+                    # pdb.set_trace()
+                    diagonal_value += THREE_VALUE
+        return diagonal_value
