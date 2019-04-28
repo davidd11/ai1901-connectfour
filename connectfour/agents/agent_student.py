@@ -2,9 +2,13 @@ from connectfour.agents.computer_player import RandomAgent
 import random
 import pdb
 
+TWO_VALUE = 10
+
+TWO_IN_ROW = 2
+
 WINDOW_LENGTH = 4
 
-THREE_VALUE = 10
+THREE_VALUE = 100
 
 LOSE_VALUE = -1000000000000000
 
@@ -132,6 +136,7 @@ class StudentAgent(RandomAgent):
             board_value += self.check_horizontal(board)
             board_value += self.check_vertical(board)
             board_value += self.check_diagonal_down(board)
+            board_value += self.check_diagonal_up(board)
         return board_value
 
     # Checking each row for possible 3 in a row or 4 in a row
@@ -150,6 +155,8 @@ class StudentAgent(RandomAgent):
                 if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
                     # pdb.set_trace()
                     horizontal_value += THREE_VALUE
+                if window.count(self.id) == TWO_IN_ROW and window.count(0) == 2:
+                    horizontal_value += TWO_VALUE
         return horizontal_value
 
     # Checking each column for possible 3 or 4 in column
@@ -172,6 +179,8 @@ class StudentAgent(RandomAgent):
                     # pdb
                     # print("3 Column")
                     vertical_value += THREE_VALUE
+                if window.count(self.id) == TWO_IN_ROW and window.count(0) == 2:
+                    vertical_value += TWO_VALUE
             # print()
         return vertical_value
 
@@ -183,6 +192,25 @@ class StudentAgent(RandomAgent):
                 for i in range(WINDOW_LENGTH):
                     window.append(board.get_cell_value(row + i, col + i))
                 # pdb.set_trace()
+                # print(*window)
+                if window.count(self.id) == FOUR_IN_ROW:
+                    diagonal_value += WIN_VALUE
+                # If window contains 3 player pieces and 1 empty piece
+                if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
+                    # pdb.set_trace()
+                    diagonal_value += THREE_VALUE
+                if window.count(self.id) == TWO_IN_ROW and window.count(0) == 2:
+                    diagonal_value += TWO_VALUE
+        return diagonal_value
+
+    def check_diagonal_up(self, board):
+        diagonal_value = 0
+        for row in range(board.height - 1, board.height - 3, -1):
+            for col in range(board.width - 3):
+                window = []
+                for i in range(WINDOW_LENGTH):
+                    # pdb.set_trace()
+                    window.append(board.get_cell_value(row - i, col + i))
                 print(*window)
                 if window.count(self.id) == FOUR_IN_ROW:
                     diagonal_value += WIN_VALUE
@@ -190,4 +218,6 @@ class StudentAgent(RandomAgent):
                 if window.count(self.id) == THREE_IN_ROW and window.count(0) == 1:
                     # pdb.set_trace()
                     diagonal_value += THREE_VALUE
+                if window.count(self.id) == TWO_IN_ROW and window.count(0) == 2:
+                    diagonal_value += TWO_VALUE
         return diagonal_value
