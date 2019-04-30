@@ -216,7 +216,5 @@ class StudentAgent(RandomAgent):
             window_value -= WIN_VALUE
         elif window.count(opponent_id) == THREE_IN_ROW and window.count(0) == 1:
             window_value -= THREE_VALUE
-        # elif window.count(opponent_id) == TWO_IN_ROW and window.count(0) == 2:
-        #     window_value -= TWO_VALUE
 
         return window_value
